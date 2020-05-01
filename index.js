@@ -39,9 +39,27 @@ Airplane.prototype.land = function () {
         + It should return a string with `name` and `age`. Example: "Mary, 50"
 */
 
-function Person() {
-
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+  this.stomach = [];
 }
+
+Person.prototype.eat = function(food) {
+  if (this.stomach.length >= 10) {
+    return; // stomach is full! can't eat anymore!
+  } else {
+    this.stomach.push(food); //eat
+  }
+};
+
+Person.prototype.poop = function() {
+  this.stomach = [];
+};
+
+Person.prototype.toString = function() {
+  return `${this.name}, ${this.age}`;
+};
 
 /*
   TASK 2
@@ -57,9 +75,35 @@ function Person() {
         + The `drive` method should return a string "I ran out of fuel at x miles!" x being `odometer`.
 */
 
-function Car() {
-
+function Car(model, milesPerGallon) {
+  this.model = model;
+  this.milesPerGallon = milesPerGallon;
+  this.tank = 0;
+  this.odometer = 0;
 }
+
+Car.prototype.fill = function(gallons) {
+  this.tank += gallons;
+};
+
+Car.prototype.drive = function(distance) {
+  const maxRange = this.tank * this.milesPerGallon;
+
+  if (this.tank > 0) {
+    if (distance > maxRange) {
+      this.odometer += maxRange; /* we can only increment the odometer up to the maximum range */
+      this.tank = 0; /* the tank is officially empty! we tried to go beyond our maximum range */
+
+      return `I ran out of fuel at ${this.odometer} miles!`;
+    } else {
+      this.odometer += distance;
+    }
+
+    this.tank -=
+      distance / this.milesPerGallon; /* subtract the correct amount of gas */
+  }
+};
+
 
 /*
   TASK 3
@@ -68,9 +112,24 @@ function Car() {
     - Besides the methods on Person.prototype, babies have the ability to `.play()`:
         + Should return a string "Playing with x", x being the favorite toy.
 */
-function Baby() {
+function Baby(name, age, favoriteToy) {
+  Person.call(this, [
+    name,
+    age,
+    favoriteToy
+  ]); /* bind 'this' to the Person constructor */
 
+  this.name = name;
+  this.age = age;
+  this.favoriteToy = favoriteToy;
 }
+
+Baby.prototype = Object.create(Person.prototype);
+
+Baby.prototype.play = function() {
+  return `Playing with ${this.favoriteToy}`;
+};
+
 
 /* 
   TASK 4
